@@ -6,17 +6,39 @@ def mover_jugador(nave_jugador, direccion):
 	elif 'O' in direccion:
 		if pos[0]!=0:
 			nave_jugador['posicion']=(pos[0] - 30,pos[1])
-    return nave_jugador
+	return nave_jugador
 
 def disparar(nave, proyectiles):
 	nave["municion"] -= 1
-    return proyectiles
+	lista=((nave['posicion']),"J","N")
+	proyectiles.add(lista)
+	return proyectiles
 
 def mover_proyectiles(proyectiles):
-    return proyectiles
+	proyectil=list(proyectiles)
+	for i in proyectil:
+		pos_proyectil=list(i[0])
+		pos_proyectil=(pos_proyectil[0],pos_proyectil[1]-30)
+		proyectil_nuevo=(pos_proyectil,i[1],i[2])
+		proyectiles.remove(i)
+		proyectiles.add(proyectil_nuevo)
+		#print pos_proyectil
+		#exit()
+	#print proyectiles
+	return proyectiles
 
 def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion):
-    return jugador, enemigos, proyectiles
+	lista_proyectiles=list(proyectiles)
+	lista_enemigos=list(enemigos)
+	for i in lista_proyectiles:
+		pos_proyectil=i[0]
+		if pos_proyectil[1]<0:
+			proyectiles.remove(i)
+		for ene in lista_enemigos:
+			pos_enemigo=ene['posicion']
+			if pos_enemigo==pos_proyectil:
+				print "destruccion"
+	return jugador, enemigos, proyectiles
 
 def mover_enemigo(enemigo, contadorjugadas):
 	pos_ene = enemigo['posicion']
@@ -80,7 +102,7 @@ def mover_enemigo(enemigo, contadorjugadas):
 	 	enemigo['posicion']=(pos_ene[0] - 30,pos_ene[1])
 	if contadorjugadas==175:
 	 	enemigo['posicion']=(pos_ene[0],pos_ene[1]+30)
-    return enemigo
+	return enemigo
 
 
 #Bonificacion
