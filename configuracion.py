@@ -32,8 +32,8 @@ IMAGEN_POTENCIADOR_MUNICION = "caja_municion.png"
 MUSICA_FONDO = "batalla.wav"
 SONIDO_DISPARO = "disparo.wav"
 SONIDO_IMPACTO = "impacto.wav"
-SONIDO_FIN_GANA = "fin_gana.wav"
-SONIDO_FIN_PIERDE = "fin_pierde.wav"
+SONIDO_FIN_GANA = "VIC-TORIA.wav"
+SONIDO_FIN_PIERDE = "PERDER.wav"
 SONIDO_POTENCIADOR = "potenciador.wav"
 
 # Orientacion inicial, cantidad de escudo y municion maxima del jugador.

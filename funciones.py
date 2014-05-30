@@ -38,9 +38,10 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 				proyectiles.remove(i)
 				ene['escudo']-=1
 				if ene['escudo']==0:
-					print imagen_explosion
 					superficie.blit(imagen_explosion,pos_enemigo)
 					enemigos.remove(ene)
+					if ene['tipo']=='M':
+						aumentar_municion(jugador)
 	return jugador, enemigos, proyectiles
 
 def mover_enemigo(enemigo, contadorjugadas):
@@ -111,10 +112,17 @@ def mover_enemigo(enemigo, contadorjugadas):
 #Bonificacion
 def actualizar_mapa(nivel):
     mapa='mapa.txt'
+    if nivel==2:
+    	mapa='mapa2.txt'
+    if nivel==3:
+    	mapa='mapa3.txt'
+    if nivel==4:
+    	mapa='mapa4.txt'
+    print nivel
     return mapa
 
 def aumentar_municion(jugador):
-	jugador[municion]=jugador[municion]+50
+	jugador['municion']=jugador['municion']+50
 	return jugador
 
 
