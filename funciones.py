@@ -22,9 +22,6 @@ def mover_proyectiles(proyectiles):
 		proyectil_nuevo=(pos_proyectil,i[1],i[2])
 		proyectiles.remove(i)
 		proyectiles.add(proyectil_nuevo)
-		#print pos_proyectil
-		#exit()
-	#print proyectiles
 	return proyectiles
 
 def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion):
@@ -36,8 +33,14 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 			proyectiles.remove(i)
 		for ene in lista_enemigos:
 			pos_enemigo=ene['posicion']
+			escudo_enemigo=ene['escudo']
 			if pos_enemigo==pos_proyectil:
-				print "destruccion"
+				proyectiles.remove(i)
+				ene['escudo']-=1
+				if ene['escudo']==0:
+					print imagen_explosion
+					superficie.blit(imagen_explosion,pos_enemigo)
+					enemigos.remove(ene)
 	return jugador, enemigos, proyectiles
 
 def mover_enemigo(enemigo, contadorjugadas):
@@ -111,7 +114,8 @@ def actualizar_mapa(nivel):
     return mapa
 
 def aumentar_municion(jugador):
-    return jugador
+	jugador[municion]=jugador[municion]+50
+	return jugador
 
 
 
