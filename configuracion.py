@@ -6,6 +6,7 @@ TITULO_VENTANA = "Galaxian pygame"
 MAPA= 'mapa.txt'
 
 
+FPS_MAX= 30
 # Fondo de pantalla: png o jpeg (800 x 600)
 FONDO_MAPA = "fondo.jpg"
 
@@ -30,7 +31,7 @@ IMAGEN_POTENCIADOR_MUNICION = "caja_municion.png"
 
 # Audio.
 MUSICA_FONDO = "batalla.wav"
-SONIDO_DISPARO = "disparo.wav"
+SONIDO_DISPARO = "dis3.wav"
 SONIDO_IMPACTO = "impacto.wav"
 SONIDO_FIN_GANA = "VIC-TORIA.wav"
 SONIDO_FIN_PIERDE = "PERDER.wav"
@@ -57,5 +58,8 @@ PERMITIR_SONIDO = True
 # Activar/Desactivar el modo "sin fin".
 MODO_SINFIN = True
 
-# Controla cada cuanto tiempo aparece un potenciador (en segundos).
+# Controla cada cuanto tiempo aparece un potenciador (en segundos).##Esto no se usa xD
 PERIODO_POTENCIADOR = 10
+
+#Se pregunta si quiere que los enemigos disparen
+enemigos_disparan=True

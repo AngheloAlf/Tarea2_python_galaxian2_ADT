@@ -6,25 +6,62 @@ def mover_jugador(nave_jugador, direccion):
 	elif 'O' in direccion:
 		if pos[0]!=0:
 			nave_jugador['posicion']=(pos[0] - 30,pos[1])
+	elif 'N' in direccion:
+		if pos[1]!=390:
+			nave_jugador['posicion']=(pos[0],pos[1]-30)
+	elif 'S' in direccion:
+		if pos[1]!=540:
+			nave_jugador['posicion']=(pos[0],pos[1]+30)
 	return nave_jugador
 
 def disparar(nave, proyectiles):
 	nave["municion"] -= 1
-	lista=((nave['posicion']),"J","N")
+	lista=((nave['posicion']),nave['tipo'],nave['orientacion'])
 	proyectiles.add(lista)
 	return proyectiles
 
 def mover_proyectiles(proyectiles):
 	proyectil=list(proyectiles)
 	for i in proyectil:
-		pos_proyectil=list(i[0])
-		pos_proyectil=(pos_proyectil[0],pos_proyectil[1]-30)
-		proyectil_nuevo=(pos_proyectil,i[1],i[2])
-		proyectiles.remove(i)
-		proyectiles.add(proyectil_nuevo)
+		if i[2]=='N':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0],pos_proyectil[1]-30)
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
+		if i[2]=='S':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0],pos_proyectil[1]+30)
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
+		if i[2]=='E':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0]+30,pos_proyectil[1])
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
+		if i[2]=='O':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0]-30,pos_proyectil[1])
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
+		if i[2]=='D1':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0]-30,pos_proyectil[1]-30)
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
+		if i[2]=='D2':
+			pos_proyectil=list(i[0])
+			pos_proyectil=(pos_proyectil[0]+30,pos_proyectil[1]-30)
+			proyectil_nuevo=(pos_proyectil,i[1],i[2])
+			proyectiles.remove(i)
+			proyectiles.add(proyectil_nuevo)
 	return proyectiles
 
-def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion):
+def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion,puntaje):
 	lista_proyectiles=list(proyectiles)
 	lista_enemigos=list(enemigos)
 	for i in lista_proyectiles:
@@ -34,7 +71,7 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 		for ene in lista_enemigos:
 			pos_enemigo=ene['posicion']
 			escudo_enemigo=ene['escudo']
-			if pos_enemigo==pos_proyectil:
+			if pos_enemigo==pos_proyectil and i[1]=='J':
 				proyectiles.remove(i)
 				ene['escudo']-=1
 				if ene['escudo']==0:
@@ -42,7 +79,22 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 					enemigos.remove(ene)
 					if ene['tipo']=='M':
 						aumentar_municion(jugador)
-	return jugador, enemigos, proyectiles
+						puntaje+=750
+					if ene['tipo']=='E':
+						puntaje+=50
+					if ene['tipo']=='F':
+						puntaje+=250
+					if ene['tipo']=='G':
+						puntaje+=500
+		if jugador['posicion']==pos_proyectil and i[1]!='J':
+			if pos_proyectil==jugador['posicion']:
+				proyectiles.remove(i)
+				jugador['escudo']-=1
+				print jugador['escudo']
+				if jugador['escudo']==0:
+					superficie.blit(imagen_explosion,jugador['posicion'])
+					#del jugador
+	return jugador, enemigos, proyectiles,puntaje
 
 def mover_enemigo(enemigo, contadorjugadas):
 	pos_ene = enemigo['posicion']
@@ -112,18 +164,50 @@ def mover_enemigo(enemigo, contadorjugadas):
 #Bonificacion
 def actualizar_mapa(nivel):
     mapa='mapa.txt'
-    if nivel==2:
+    if nivel==2 or (nivel-2)%10==0:
     	mapa='mapa2.txt'
-    if nivel==3:
+    if nivel==3 or (nivel-3)%10==0:
     	mapa='mapa3.txt'
-    if nivel==4:
+    if nivel==4 or (nivel-4)%10==0:
     	mapa='mapa4.txt'
-    print nivel
+    # if nivel==5 or (nivel-5)%10==0:
+    # 	mapa='mapa5.txt'
+    # if nivel==6 or (nivel-6)%10==0:
+    # 	mapa='mapa6.txt'
+    # if nivel==7 or (nivel-7)%10==0:
+    # 	mapa='mapa7.txt'
+    # if nivel==8 or (nivel-8)%10==0:
+    # 	mapa='mapa8.txt'
+    # if nivel==9 or (nivel-9)%10==0:
+    # 	mapa='mapa9.txt'
+    # if nivel==10 or (nivel-10)%10==0:
+    # 	mapa='mapa10.txt'
+
     return mapa
 
 def aumentar_municion(jugador):
-	jugador['municion']=jugador['municion']+50
+	jugador['municion']+=50
 	return jugador
 
 
+def obtiene_potenciador(jugador,potenciador):
+	if jugador['posicion']==potenciador[1]:
+		return True
+	return False
 
+def activar_potenciador(jugador,potenciador,puntaje):
+	if potenciador[0]=='municion':
+		jugador['municion']+=25
+	elif potenciador[0]=='escudo':
+		jugador['escudo']+=2
+	puntaje+=2000
+	return jugador,puntaje
+
+def mover_potenciador(potenciador):
+	return (potenciador[0],(potenciador[1][0],potenciador[1][1]+30))
+
+def puntos_por_municion(jugador,puntaje):
+	agregar=(jugador['municion']-1)/10
+	puntaje=puntaje + agregar*10
+	#jugador['municion']=1
+	return jugador,puntaje

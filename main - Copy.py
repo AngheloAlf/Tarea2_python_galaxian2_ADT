@@ -45,17 +45,15 @@ imagen_potenciador = {
 # Se obtienen las imagenes de jugador y de los enemigos en distintas orientaciones.
 imagen_jugador = {
 'N': imagen_jugador,
-'E': pygame.transform.rotate(imagen_jugador, 270),
-'S': pygame.transform.rotate(imagen_jugador, 180),
-'O': pygame.transform.rotate(imagen_jugador, 90),
-'D1': pygame.transform.rotate(imagen_jugador, 45),
-'D2':pygame.transform.rotate(imagen_jugador, 315)
+'E': pygame.transform.rotate(imagen_jugador, 0),
+'S': pygame.transform.rotate(imagen_jugador, 0),
+'O': pygame.transform.rotate(imagen_jugador, 0)
 }
 imagen_enemigo = {
-'N': pygame.transform.rotate(imagen_enemigo, 180),
-'E': pygame.transform.rotate(imagen_enemigo, 90),
-'S': imagen_enemigo,
-'O': pygame.transform.rotate(imagen_enemigo, 270)
+'N': imagen_enemigo,
+'E': pygame.transform.rotate(imagen_enemigo, 0),
+'S': pygame.transform.rotate(imagen_enemigo, 0),
+'O': pygame.transform.rotate(imagen_enemigo, 0)
 }
 
 # Se cargan las fuentes de escritura.
@@ -92,10 +90,6 @@ texto_nivel         = fuente_de_texto.render("Nivel", True, BLANCO)
 texto_puntaje       = fuente_de_texto.render("Puntaje",True, BLANCO)
 juego               = True
 nivel               = 1
-
-puntaje             = 0
-curpuntaje          = 0
-tier                = 10000
 
 while juego:
     texto_n_municion    = fuente_de_texto_grande.render("{0}".format(MUNICION_JUGADOR), True, BLANCO)
@@ -172,15 +166,13 @@ while juego:
     destinos            = posiciones_naves[1:]
     posiciones_enemigos = list()
     potenciador         = None
-    #FPS_MAX             = 30
+    FPS_MAX             = 30
     tiempo              = 0.0
     minutos             = 0
     contadorjugadas     = 0
+    puntaje             = 0
     
     texto_n_puntaje     = fuente_de_texto_grande.render("{0}".format(puntaje), True, BLANCO)
-
-    ## Revisa si el jugador gana
-    jugador_gano=False
 
     # Se espera hasta que el usuario presione la tecla Enter para comenzar.
     esperando_tecla = True
@@ -215,15 +207,7 @@ while juego:
 
     while activo:
 
-        texto_n_escudo      = fuente_de_texto_grande.render("{0}".format(jugador["escudo"]), True, BLANCO)
-        superficie_muralla.blit(texto_n_escudo,(330,10))
-        if curpuntaje < puntaje:
-            curpuntaje+=25
-        #if jugador_gano:
-            #if jugador['municion']>5:
-                #jugador['municion'] -=5
-                #texto_n_municion = fuente_de_texto_grande.render("{0}".format(jugador["municion"]), True, BLANCO)
-        texto_n_puntaje = fuente_de_texto_grande.render("{0}".format(curpuntaje), True, BLANCO)
+        texto_n_puntaje = fuente_de_texto_grande.render("{0}".format(puntaje), True, BLANCO)
         superficie_muralla.blit(texto_n_puntaje,(120,10))
         # Se limita el numero de cuadros por segundo y se cuenta el tiempo entre cada cuadro.
         tiempo += reloj.tick(FPS_MAX)
@@ -264,69 +248,56 @@ while juego:
                 elif event.key == K_RIGHT:
                     if 'E' not in direcciones:
                         direcciones.append('E')
-                        #jugador = cambiar_orientacion(jugador, 'E')
+                        jugador = cambiar_orientacion(jugador, 'E')
                         pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
 
                 elif event.key == K_LEFT:
                     if 'O' not in direcciones:
-                        #jugador = cambiar_orientacion(jugador, 'O')
+                        jugador = cambiar_orientacion(jugador, 'O')
                         direcciones.append('O')
                         pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
                 elif event.key == K_UP:
                     if 'N' not in direcciones:
                         direcciones.append('N')
-                        #jugador = cambiar_orientacion(jugador, 'N')
+                        jugador = cambiar_orientacion(jugador, 'N')
                         pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
 
                 elif event.key == K_DOWN:
                     if 'S' not in direcciones:
-                        #jugador = cambiar_orientacion(jugador, 'S')
+                        jugador = cambiar_orientacion(jugador, 'S')
                         direcciones.append('S')
                         pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
                 
 
                 elif event.key == K_d:
-                        #direcciones.append('E')
-                    jugador = cambiar_orientacion(jugador, 'E')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
+                    if 'E' not in direcciones:
+                        direcciones.append('E')
+                        jugador = cambiar_orientacion(jugador, 'E')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
 
-                    superficie_muralla.blit(imagen_jugador[jugador["orientacion"]], jugador["posicion"])
-                
                 elif event.key == K_a:
-                    #if 'O' not in direcciones:
-                    jugador = cambiar_orientacion(jugador, 'O')
-                        #direcciones.append('O')
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
+                    if 'O' not in direcciones:
+                        jugador = cambiar_orientacion(jugador, 'O')
+                        direcciones.append('O')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
                 elif event.key == K_w:
-                    #if 'N' not in direcciones:
-                        #direcciones.append('N')
-                    jugador = cambiar_orientacion(jugador, 'N')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
+                    if 'N' not in direcciones:
+                        direcciones.append('N')
+                        jugador = cambiar_orientacion(jugador, 'N')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
 
                 elif event.key == K_s:
-                    #if 'S' not in direcciones:
-                    jugador = cambiar_orientacion(jugador, 'S')
-                        #direcciones.append('S')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
-                elif event.key== K_q:
-                    jugador = cambiar_orientacion(jugador, 'D1')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
-                elif event.key== K_e:
-                    jugador = cambiar_orientacion(jugador, 'D2')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
+                    if 'S' not in direcciones:
+                        jugador = cambiar_orientacion(jugador, 'S')
+                        direcciones.append('S')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
 
                 elif event.key == K_SPACE:
-                    if jugador_gano!=True:
-                        if jugador["municion"] > 0:
-                            if PERMITIR_SONIDO:
-                                sonido_disparo.play()
-                            proyectiles = disparar(jugador, proyectiles)
-                            texto_n_municion = fuente_de_texto_grande.render("{0}".format(jugador["municion"]), True, BLANCO)
+                    if jugador["municion"] > 0:
+                        if PERMITIR_SONIDO:
+                            sonido_disparo.play()
+                        proyectiles = disparar(jugador, proyectiles)
+                        texto_n_municion = fuente_de_texto_grande.render("{0}".format(jugador["municion"]), True, BLANCO)
             elif event.type == KEYUP:
                 if event.key == K_UP:
                     if 'N' in direcciones:
@@ -341,18 +312,18 @@ while juego:
                     if 'O' in direcciones:
                         direcciones.remove('O')
 
-                # if event.key == K_w:
-                #     if 'N' in direcciones:
-                #         direcciones.remove('N')
-                # elif event.key == K_d:
-                #     if 'E' in direcciones:
-                #         direcciones.remove('E')
-                # elif event.key == K_s:
-                #     if 'S' in direcciones:
-                #         direcciones.remove('S')
-                # elif event.key == K_a:
-                #     if 'O' in direcciones:
-                #         direcciones.remove('O')
+                if event.key == K_w:
+                    if 'N' in direcciones:
+                        direcciones.remove('N')
+                elif event.key == K_d:
+                    if 'E' in direcciones:
+                        direcciones.remove('E')
+                elif event.key == K_s:
+                    if 'S' in direcciones:
+                        direcciones.remove('S')
+                elif event.key == K_a:
+                    if 'O' in direcciones:
+                        direcciones.remove('O')
 
                 elif event.key == K_SPACE:
                     pass
@@ -393,7 +364,7 @@ while juego:
 
                     # Si el jugador se posiciona sobre un potenciador, se activa su efecto y desaparece.
                     if potenciador != None and obtiene_potenciador(jugador, potenciador):
-                        jugador,puntaje = activar_potenciador(jugador, potenciador,puntaje)
+                        jugador = activar_potenciador(jugador, potenciador)
                         if PERMITIR_SONIDO:
                             sonido_potenciador.play()
                         potenciador = None
@@ -405,35 +376,14 @@ while juego:
             elif event.type == MOVIMIENTO_ENEMIGOS:
                 contadorjugadas+=1
 
-                loen_enemies=len(enemigos)
-                #if loen_enemies==0:
-                #    loen_enemies=1
-                
-                #if numero_disparo_random1==0:
-                if enemigos_disparan and loen_enemies>=1:
-                    numero_disparo_random1=randrange(0,loen_enemies)
+                numero_disparo_random1=randrange(0,len(enemigos))
+                if numero_disparo_random1!=0:
                     disparar(enemigos[numero_disparo_random1],proyectiles)
 
                 posiciones_enemigos = obtener_lista_posiciones(enemigos)
-                if loen_enemies>=1:
-                    for i in range(loen_enemies):
-                        enemigos[i] = mover_enemigo(enemigos[i],contadorjugadas)
-                        posiciones_enemigos[i] = enemigos[i]["posicion"]
-
-                caja_random=randrange(1,3)
-                pos_caja_random=randrange(0,20)
-                if int(curpuntaje/tier)==1:
-                    if caja_random==1 and potenciador==None:
-                        potenciador=('municion',(pos_caja_random*30,60))
-                        tier+=10000
-                    elif caja_random==2 and potenciador==None:
-                        potenciador=('escudo',(pos_caja_random*30,60))
-                        tier +=10000
-                if potenciador!=None:
-                    if contadorjugadas%2==0:
-                        potenciador=mover_potenciador(potenciador)
-                    if potenciador[1][1]>540:
-                        potenciador=None 
+                for i in range(len(enemigos)):
+                    enemigos[i] = mover_enemigo(enemigos[i],contadorjugadas)
+                    posiciones_enemigos[i] = enemigos[i]["posicion"]
 
                 # Se dibujan los enemigos en pantalla.
                 dibujado_enemigos = True
@@ -460,12 +410,7 @@ while juego:
                     texto_n_escudo = fuente_de_texto_grande.render("{0}".format(jugador["escudo"]), True, BLANCO)
 
             # Se revisa si el jugador gana (solo con modo "sin fin" desactivado).
-            if jugador_gana(enemigos): # and curpuntaje==puntaje:
-                jugador_gano=True
-                jugador,puntaje= puntos_por_municion(jugador, puntaje)
-                texto_n_municion    = fuente_de_texto_grande.render("{0}".format(jugador['municion']), True, BLANCO)
-                print 'municion',jugador['municion']
-                #if curpuntaje==puntaje:
+            if jugador_gana(enemigos):
                 victoria = True
                 activo = False
                 nivel+=1
@@ -518,7 +463,6 @@ while juego:
         if PERMITIR_SONIDO:
             sonido_fin_gana.play()
         ventana.blit(imagen_fin_gana, (0, 0))
-        jugador_gano=False
     else:
         if PERMITIR_SONIDO:
             sonido_fin_pierde.play()
@@ -531,10 +475,6 @@ while juego:
     # Se espera a que el usuario presione la tecla Enter para salir.
     esperando_tecla = True
     while esperando_tecla:
-        #if curpuntaje < puntaje:
-        #    curpuntaje+=25
-        #texto_n_puntaje = fuente_de_texto_grande.render("{0}".format(curpuntaje), True, BLANCO)
-        #superficie_muralla.blit(texto_n_puntaje,(120,10))
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()

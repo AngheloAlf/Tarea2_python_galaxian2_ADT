@@ -65,7 +65,8 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 		"posicion": posicion_enemigo,
 		"tipo": 'E',
 		"orientacion": ORIENTACION_INICIAL_ENEMIGOS,
-		"escudo": ESCUDO_ENEMIGOS
+		"escudo": ESCUDO_ENEMIGOS,
+		"municion": 999999
 		}
 
 		naves_enemigos.append(nave_enemigo)
@@ -75,7 +76,8 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 		"posicion": posicion_enemigo,
 		"tipo": 'M',
 		"orientacion": ORIENTACION_INICIAL_ENEMIGOS,
-		"escudo": ESCUDO_ENEMIGOS_MADRE
+		"escudo": ESCUDO_ENEMIGOS_MADRE,
+		"municion": 999999
 		}
 
 		naves_enemigos.append(nave_enemigo)
@@ -85,7 +87,8 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 		"posicion": posicion_enemigo,
 		"tipo": 'F',
 		"orientacion": ORIENTACION_INICIAL_ENEMIGOS,
-		"escudo": ESCUDO_ENEMIGOS_NIVEL1
+		"escudo": ESCUDO_ENEMIGOS_NIVEL1,
+		"municion": 999999
 		}
 
 		naves_enemigos.append(nave_enemigo)
@@ -95,7 +98,8 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 		"posicion": posicion_enemigo,
 		"tipo": 'G',
 		"orientacion": ORIENTACION_INICIAL_ENEMIGOS,
-		"escudo": ESCUDO_ENEMIGOS_NIVEL2
+		"escudo": ESCUDO_ENEMIGOS_NIVEL2,
+		"municion": 999999
 		}
 
 		naves_enemigos.append(nave_enemigo)
@@ -103,6 +107,7 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 	return nave_jugador, naves_enemigos
 
 def cambiar_orientacion(jugador, direccion):
+	jugador['orientacion']=direccion
 	return jugador
 
 def obtener_lista_posiciones(enemigos):
