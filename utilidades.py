@@ -107,7 +107,8 @@ def crear_lista_naves(posiciones_naves,posiciones_naves_madres,posiciones_naves_
 	return nave_jugador, naves_enemigos
 
 def cambiar_orientacion(jugador, direccion):
-	jugador['orientacion']=direccion
+	if permitir_rotacion:
+		jugador['orientacion']=direccion
 	return jugador
 
 def obtener_lista_posiciones(enemigos):

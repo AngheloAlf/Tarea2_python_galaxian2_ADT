@@ -70,6 +70,12 @@ sonido_fin_gana     = pygame.mixer.Sound("audio/"+SONIDO_FIN_GANA)
 sonido_fin_pierde   = pygame.mixer.Sound("audio/"+SONIDO_FIN_PIERDE)
 sonido_potenciador  = pygame.mixer.Sound("audio/"+SONIDO_POTENCIADOR)
 
+nave_madre_destruida    = pygame.mixer.Sound("audio/"+SONIDO_NAVE_MADRE)
+nave_nivel2_destruida   = pygame.mixer.Sound("audio/"+SONIDO_NAVE_NIVEL2)
+nave_nivel1_destruida   = pygame.mixer.Sound("audio/"+SONIDO_NAVE_NIVEL1)
+nave_enemiga_destruida  = pygame.mixer.Sound("audio/"+SONIDO_NAVE_ENEMIGA)
+
+
 # Se crea el mapa de juego.
 posiciones_naves, bloques_muralla,posiciones_naves_madres,posiciones_naves_nivel1,posiciones_naves_nivel2 = crear_mapa(MAPA, superficie_muralla, imagen_muralla)
 
@@ -86,8 +92,8 @@ texto_tiempo        = fuente_de_texto.render("Tiempo", True, BLANCO)
 #texto_n_municion    = fuente_de_texto_grande.render("{0}".format(MUNICION_JUGADOR), True, BLANCO)
 texto_n_escudo      = fuente_de_texto_grande.render("{0}".format(jugador["escudo"]), True, BLANCO)
 texto_n_tiempo      = fuente_de_texto_grande.render("00:00", True, BLANCO)
-texto_progra        = fuente_de_texto.render("Programacion", True, BLANCO)
-texto_utfsm         = fuente_de_texto.render("UTFSM", True, BLANCO)
+texto_progra        = fuente_de_texto.render("ALF", True, BLANCO)
+texto_utfsm         = fuente_de_texto.render("", True, BLANCO)
 texto_nivel         = fuente_de_texto.render("Nivel", True, BLANCO)
 texto_puntaje       = fuente_de_texto.render("Puntaje",True, BLANCO)
 juego               = True
@@ -112,16 +118,19 @@ while juego:
 
     # Se dibuja el hud.
     superficie_muralla.blit(texto_nivel, (480,580))
-    #superficie_muralla.blit(texto_tiempo, (20, 10))
-    #superficie_muralla.blit(texto_n_tiempo, (100, 10))
+    if permitir_puntaje==False:
+        superficie_muralla.blit(texto_tiempo, (20, 10))
+        superficie_muralla.blit(texto_n_tiempo, (100, 10))
     superficie_muralla.blit(texto_municion, (450, 10))
     superficie_muralla.blit(imagen_proyectil, (20, 150))
     superficie_muralla.blit(superficie_muralla, (0, 0))
     superficie_muralla.blit(texto_progra, (10, 580))
     superficie_muralla.blit(texto_utfsm, (150, 580))
     #superficie_muralla.blit(texto_n_municion, (550, 10))
-    superficie_muralla.blit(texto_escudo,(260,10))
-    superficie_muralla.blit(texto_puntaje,(20,10))
+    if enemigos_disparan:
+        superficie_muralla.blit(texto_escudo,(260,10))
+    if permitir_puntaje:
+        superficie_muralla.blit(texto_puntaje,(20,10))
 
 
     # Se dibujan todos los elementos del juego en la pantalla.
@@ -176,7 +185,8 @@ while juego:
     tiempo              = 0.0
     minutos             = 0
     contadorjugadas     = 0
-    
+    nave_destruida      = ""
+
     texto_n_puntaje     = fuente_de_texto_grande.render("{0}".format(puntaje), True, BLANCO)
 
     ## Revisa si el jugador gana
@@ -216,7 +226,8 @@ while juego:
     while activo:
 
         texto_n_escudo      = fuente_de_texto_grande.render("{0}".format(jugador["escudo"]), True, BLANCO)
-        superficie_muralla.blit(texto_n_escudo,(330,10))
+        if enemigos_disparan:
+            superficie_muralla.blit(texto_n_escudo,(330,10))
         if curpuntaje < puntaje:
             curpuntaje+=25
         #if jugador_gano:
@@ -224,7 +235,8 @@ while juego:
                 #jugador['municion'] -=5
                 #texto_n_municion = fuente_de_texto_grande.render("{0}".format(jugador["municion"]), True, BLANCO)
         texto_n_puntaje = fuente_de_texto_grande.render("{0}".format(curpuntaje), True, BLANCO)
-        superficie_muralla.blit(texto_n_puntaje,(120,10))
+        if permitir_puntaje:
+            superficie_muralla.blit(texto_n_puntaje,(120,10))
         # Se limita el numero de cuadros por segundo y se cuenta el tiempo entre cada cuadro.
         tiempo += reloj.tick(FPS_MAX)
 
@@ -312,13 +324,15 @@ while juego:
                     pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
                     dibujar_jugador(ventana, jugador, imagen_jugador)
                 elif event.key== K_q:
-                    jugador = cambiar_orientacion(jugador, 'D1')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
+                    if permitir_diagonales:
+                        jugador = cambiar_orientacion(jugador, 'D1')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
+                        dibujar_jugador(ventana, jugador, imagen_jugador)
                 elif event.key== K_e:
-                    jugador = cambiar_orientacion(jugador, 'D2')
-                    pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
-                    dibujar_jugador(ventana, jugador, imagen_jugador)
+                    if permitir_diagonales:
+                        jugador = cambiar_orientacion(jugador, 'D2')
+                        pygame.time.set_timer(MOVIMIENTO, PERIODO_JUGADOR)
+                        dibujar_jugador(ventana, jugador, imagen_jugador)
 
                 elif event.key == K_SPACE:
                     if jugador_gano!=True:
@@ -365,7 +379,7 @@ while juego:
             # Contatar impactos (se debe hacer tanto para el mov. de proyectiles como
             # para el mov. de enemigos).
             escudo_antes = jugador["escudo"]
-            jugador, enemigos, proyectiles,puntaje = constatar_impacto(jugador, enemigos, proyectiles,ventana,imagen_explosion,puntaje)
+            jugador, enemigos, proyectiles,puntaje,nave_detruida = constatar_impacto(jugador, enemigos, proyectiles,ventana,imagen_explosion,puntaje)
 
             # Se revisa si el jugador ha perdido cada vez que su escudo disminuye.
             if jugador["escudo"] != escudo_antes:
@@ -422,7 +436,7 @@ while juego:
 
                 caja_random=randrange(1,3)
                 pos_caja_random=randrange(0,20)
-                if int(curpuntaje/tier)==1:
+                if permitir_potenciador and int(curpuntaje/tier)==1:
                     if caja_random==1 and potenciador==None:
                         potenciador=('municion',(pos_caja_random*30,60))
                         tier+=10000
@@ -435,6 +449,8 @@ while juego:
                     if potenciador[1][1]>540:
                         potenciador=None 
 
+                enemigos = cambiar_orientacion_enemigos(enemigos,jugador)
+
                 # Se dibujan los enemigos en pantalla.
                 dibujado_enemigos = True
                 dibujar_enemigos(ventana, enemigos, imagen_enemigo,imagen_navemadre,imagen_navenivel1,imagen_navenivel2)
@@ -442,8 +458,21 @@ while juego:
             # Contatar impactos (se debe hacer tanto para el mov. de proyectiles como
             # para el mov. de enemigos).
             escudo_antes = jugador["escudo"]
-            jugador, enemigos, proyectiles,puntaje = constatar_impacto(jugador, enemigos, proyectiles,ventana,imagen_explosion,puntaje)
-            print puntaje
+            jugador, enemigos, proyectiles,puntaje,nave_destruida = constatar_impacto(jugador, enemigos, proyectiles,ventana,imagen_explosion,puntaje)
+            if nave_destruida=='M':
+                nave_madre_destruida.play()
+                #pass
+            elif nave_destruida=='G':
+                nave_nivel2_destruida.play()
+                #pass
+            elif nave_destruida=='M':
+                nave_nivel1_destruida.play()
+                #pass
+            elif nave_destruida=='M':
+                nave_enemiga_destruida.play()
+                #pass
+            nave_destruida=''
+            #print puntaje
             superficie_muralla.blit(texto_n_puntaje,(120,10))
 
             # Se revisa si el jugador ha perdido cada vez que su escudo disminuye.
@@ -486,14 +515,17 @@ while juego:
         superficie_muralla.blit(texto_progra, (10, 580))
         superficie_muralla.blit(texto_utfsm, (150, 580))
         superficie_muralla.blit(texto_n_municion, (550, 10))
-        #superficie_muralla.blit(texto_tiempo, (20, 10))
-        #superficie_muralla.blit(texto_n_tiempo, (100, 10))
+        if permitir_puntaje==False:
+            superficie_muralla.blit(texto_tiempo, (20, 10))
+            superficie_muralla.blit(texto_n_tiempo, (100, 10))
         superficie_muralla.blit(texto_nivel, (480,580))
         superficie_muralla.blit(texto_n_nivel, (550,580))
-        superficie_muralla.blit(texto_escudo,(260,10))
-        superficie_muralla.blit(texto_n_escudo,(330,10))
-        superficie_muralla.blit(texto_puntaje,(20,10))
-        superficie_muralla.blit(texto_n_puntaje,(120,10))
+        if enemigos_disparan:
+            superficie_muralla.blit(texto_escudo,(260,10))
+            superficie_muralla.blit(texto_n_escudo,(330,10))
+        if permitir_puntaje:
+            superficie_muralla.blit(texto_puntaje,(20,10))
+            superficie_muralla.blit(texto_n_puntaje,(120,10))
         ventana.blit(superficie_muralla, (630, 0))
 
         if potenciador != None:

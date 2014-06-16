@@ -1,17 +1,30 @@
+from configuracion import *
 def mover_jugador(nave_jugador, direccion):
 	pos=nave_jugador['posicion']
 	if 'E' in direccion:
-		if pos[0]!=600:
+		if movimiento_completamente_libre:
+			nave_jugador['posicion']=(pos[0] + 30,pos[1])
+		elif pos[0]!=600:
 			nave_jugador['posicion']=(pos[0] + 30,pos[1])
 	elif 'O' in direccion:
-		if pos[0]!=0:
+		if movimiento_completamente_libre:
 			nave_jugador['posicion']=(pos[0] - 30,pos[1])
-	elif 'N' in direccion:
-		if pos[1]!=390:
-			nave_jugador['posicion']=(pos[0],pos[1]-30)
-	elif 'S' in direccion:
-		if pos[1]!=540:
-			nave_jugador['posicion']=(pos[0],pos[1]+30)
+		elif pos[0]!=0:
+			nave_jugador['posicion']=(pos[0] - 30,pos[1])
+	if movimiento_arriba_abajo:
+		if 'N' in direccion:
+			if movimiento_libre:
+				if movimiento_completamente_libre:
+					nave_jugador['posicion']=(pos[0],pos[1]-30)
+				elif pos[1]!=0:	
+					nave_jugador['posicion']=(pos[0],pos[1]-30)
+			elif movimiento_libre==False and pos[1]!=390:
+				nave_jugador['posicion']=(pos[0],pos[1]-30)
+		elif 'S' in direccion:
+			if movimiento_completamente_libre:
+					nave_jugador['posicion']=(pos[0],pos[1]+30)
+			elif pos[1]!=540:
+				nave_jugador['posicion']=(pos[0],pos[1]+30)
 	return nave_jugador
 
 def disparar(nave, proyectiles):
@@ -64,6 +77,7 @@ def mover_proyectiles(proyectiles):
 def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion,puntaje):
 	lista_proyectiles=list(proyectiles)
 	lista_enemigos=list(enemigos)
+	nave_destruida=''
 	for i in lista_proyectiles:
 		pos_proyectil=i[0]
 		if pos_proyectil[1]<0:
@@ -86,6 +100,7 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 						puntaje+=250
 					if ene['tipo']=='G':
 						puntaje+=500
+					nave_destruida == ene['tipo']
 		if jugador['posicion']==pos_proyectil and i[1]!='J':
 			if pos_proyectil==jugador['posicion']:
 				proyectiles.remove(i)
@@ -94,7 +109,13 @@ def constatar_impacto(jugador, enemigos, proyectiles,superficie,imagen_explosion
 				if jugador['escudo']==0:
 					superficie.blit(imagen_explosion,jugador['posicion'])
 					#del jugador
-	return jugador, enemigos, proyectiles,puntaje
+		if proyectiles_explotan:
+			for pro2 in lista_proyectiles:
+				if pro2[0]==i[0] and pro2[1]!=i[1]:
+					proyectiles.remove(i)
+					superficie.blit(imagen_explosion,i[0])
+	return jugador, enemigos, proyectiles,puntaje,nave_destruida
+
 
 def mover_enemigo(enemigo, contadorjugadas):
 	pos_ene = enemigo['posicion']
@@ -211,3 +232,9 @@ def puntos_por_municion(jugador,puntaje):
 	puntaje=puntaje + agregar*10
 	#jugador['municion']=1
 	return jugador,puntaje
+
+def cambiar_orientacion_enemigos(enemigos,jugador):
+	lista_enemigos=list(enemigos)
+	for ene in lista_enemigos:
+		print ene
+	return enemigos
